@@ -5,11 +5,11 @@ from traj_sa_funcs import read_las, swath_indices, quality_metrics, get_idx
 import matplotlib.pyplot as plt
 
 
-filename = "D:/Creeping Fault/final - VQ-580 - 170822_192752_VQ-580 - originalpoints_timesorted.las"
-count = 10000000
+filename = "F:/Creeping Fault/final - VQ-580 - 170822_192752_VQ-580 - originalpoints_timesorted.las"
+count = 1000000
 min_delta = 10  # degrees
 min_pnts = 5
-rate = 1  # Hz
+rate = 10  # Hz
 
 x,y,z,t,sa = read_las(filename, count)
 
@@ -29,6 +29,11 @@ for i in range(nominal_traj_times.shape[0]-1):
         delta_sa, num_pnts,
         min_delta, min_pnts)
     print("idx = {}".format(idx))
+    times = t[indices[idx]:indices[idx+1]]
+    np.set_printoptions(precision=16)
+    print(times[0:200])
+    input("Press a key")
+    xp,yp,zp = get_pnts(x,y,z,t,sa)
 
 
 

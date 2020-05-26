@@ -100,3 +100,6 @@ def get_idx(indices, idx,
     else:
         return idx
 
+
+def get_pnts(x,y,z,t,sa,idx):
+    
