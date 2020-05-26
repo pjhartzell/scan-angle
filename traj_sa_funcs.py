@@ -22,9 +22,9 @@ def read_las(filename, count):
     y = view['Y']
     z = view['Z']
     t = view['GpsTime']
-    sa = view['ScanAngleRank']
+    a = view['ScanAngleRank']
 
-    return x, y, z, t, sa
+    return np.vstack((t,x,y,z,a)).T
 
 
 def swath_indices(sa):
@@ -101,5 +101,17 @@ def get_idx(indices, idx,
         return idx
 
 
-def get_pnts(x,y,z,t,sa,idx):
-    
+def traj_xyz(L, H, alpha_l, alpha_h):
+    b = np.sqrt(np.sum((H-L)**2))
+    beta_l = np.deg2rad(90 - abs(alpha_l))
+    beta_h = np.deg2rad(90 - abs(alpha_h))
+    alpha = beta_l + beta_h
+    gamma = beta_h - np.arcsin((L[2]-H[2]) / b)
+    d = (b * np.sin(gamma)) / np.sin(alpha)
+    theta = np.arctan2(H[1]-L[1], H[0]-L[0])
+    x = L[0] + d*np.cos(beta_l)*np.sin(theta)
+    y = L[1] + d*np.cos(beta_l)*np.sin(theta)
+    z = L[2] + d*np.sin(beta_l)
+    return x, y, z
+
+
