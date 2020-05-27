@@ -7,9 +7,12 @@ import scipy
 from scipy.signal import savgol_filter
 from scipy.interpolate import make_lsq_spline
 
-actual_252 = 'G:/Sitka/helipod/apps_final_ATLANS-20160503_NAD83-UTM8N-Geoid12B.txt'
-# actual_252 = 'G:/Sitka/helipod/trajectory_252.txt'
-est_252 = 'G:/Sitka/helipod/est_252.txt'
+# actual_252 = 'F:/Sitka/helipod/apps_final_ATLANS-20160503_NAD83-UTM8N-Geoid12B.txt'
+# actual_252 = 'F:/Sitka/helipod/trajectory_252.txt'
+# est_252 = 'F:/Sitka/helipod/est_252.txt'
+
+actual_252 = "F:/UH/sbet_047_IGS08-UTM15N-Ellipsoid.txt"
+est_252 = "F:/UH/est_252.txt"
 
 ActualTrajectory = np.loadtxt(actual_252, delimiter=',', skiprows=1)
 # ActualTrajectory = np.loadtxt(actual_252, delimiter=' ')
@@ -27,10 +30,10 @@ ActualTrajectory = ActualTrajectory[mask,:]
 TrajInterpZ= np.interp(ScanAngleTrajectory[:,0],ActualTrajectory[:,0], ActualTrajectory[:,3])
 TrajInterpX= np.interp(ScanAngleTrajectory[:,0],ActualTrajectory[:,0], ActualTrajectory[:,2])
 TrajInterpY= np.interp(ScanAngleTrajectory[:,0],ActualTrajectory[:,0], ActualTrajectory[:,1])
-Area= 'Sitka'
-flight= '252'
-sample=0.025
-every=1
+Area= 'UH'
+flight= 'C2_L2'
+sample=0
+every=0
 
 ## Height with Difference, Roll and Pitch
 fig,axs =plt.subplots(4)

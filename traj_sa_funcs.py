@@ -27,11 +27,18 @@ def read_las(filename, count):
     return np.vstack((t,x,y,z,a)).T
 
 
-def swath_indices(sa):
+def swath_indices(sa, j):
     # Given an array of scan angles that are ordered (ascending) in time, detect
     # change from increasing to decreasing scan angle, or vice versa. Returns
     # indices into the passed array at the scan angle direction change
     # locations.
+
+    # mitigate scan angle 'jitter' caused by platform dynamics
+    filter_size = j*2 + 1
+    sa = np.convolve(sa, np.ones(filter_size), 'valid') / filter_size
+    sa = np.insert(sa, 0, sa[0]*np.ones(j))
+    sa = np.append(sa, sa[-1]*np.ones(j))
+    r = np.round(sa)
 
     d = np.diff(sa)
     d[d>0] = 1
@@ -88,7 +95,7 @@ def get_idx(indices, idx,
         idx += 1
 
     # If swath fails the quality metrics, increment to the next swath until we
-    # find a swath with good metrics or we reach the next trajectory time
+    # find a swath with good metrics or we resah the next trajectory time
     while (t[indices[idx]] < t_next) and (
             (delta_sa[idx] < min_delta) or 
             (num_pnts[idx] < min_pnts)):
@@ -103,13 +110,13 @@ def get_idx(indices, idx,
 
 def traj_xyz(L, H, alpha_l, alpha_h):
     b = np.sqrt(np.sum((H-L)**2))
-    beta_l = np.deg2rad(90 - abs(alpha_l))
-    beta_h = np.deg2rad(90 - abs(alpha_h))
-    alpha = beta_l + beta_h
+    beta_l = np.deg2rad(90 + alpha_l)
+    beta_h = np.deg2rad(90 - alpha_h)
+    alpha = np.deg2rad(alpha_h - alpha_l)
     gamma = beta_h - np.arcsin((L[2]-H[2]) / b)
     d = (b * np.sin(gamma)) / np.sin(alpha)
     theta = np.arctan2(H[1]-L[1], H[0]-L[0])
-    x = L[0] + d*np.cos(beta_l)*np.sin(theta)
+    x = L[0] + d*np.cos(beta_l)*np.cos(theta)
     y = L[1] + d*np.cos(beta_l)*np.sin(theta)
     z = L[2] + d*np.sin(beta_l)
     return x, y, z

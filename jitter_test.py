@@ -19,20 +19,49 @@ a = np.array([-1.,-1.,-1.,-1.,-1.,-1.,-1.,-1.,-1.,-1.,-1.,-1.,-1.
 ,-8.,-8.,-8.,-8.,-8.,-8.,-8.,-8.,-8.,-8.,-8.,-8.,-8.,-8.
 ,-8.,-9.,-9.,-9.,-9.,-9.,-9.,-9.,-8.,-9.,-9.,-9.,-9.,-9.
 ,-9.,-9.,-9.,-9.,-9.,-9.,-9.,-9.,-9.,-9.,-9.,-9.,-9.,-9.
-,-9.,-9.,-9.,-9.,-9.,-9.,-9. -10. -10. -10. -10. -10. -10. -10.
- -10. -10. -10. -10. -10. -10. -10. -10. -10. -10. -10. -10. -10. -10.
- -10. -10. -10. -10. -10. -10. -10. -10.])
+,-9.,-9.,-9.,-9.,-9.,-9.,-9.,-10.,-10.,-10.,-10.,-10.,-10.,-10.
+,-10.,-10.,-10.,-10.,-10.,-10.,-10.,-10.,-10.,-10.,-10.,-10.,-10.,-10.
+,-10.,-10.,-10.,-10.,-10.,-10.,-10.,-10.])
 
-a0 = a[0:-4]
-a1 = a[1:-3]
+# a = np.array([-1,-1,-1,-1,-1,-1,-1,-2,-2,-2,-2,-1,-2,-1,-2,-2,-2,-2,-3,-3,-3,-3,-3,-3])
+
+j = 3
+filter_size = j*2 + 1
+
+ac = np.convolve(a, np.ones(filter_size), 'valid') / filter_size
+ac = np.insert(ac, 0, ac[0]*np.ones(j))
+ac = np.append(ac, ac[-1]*np.ones(j))
+r = np.round(ac)
+# print(a)
+print(r)
+exit()
+
+# a0 = a[0:-4]
+# a1 = a[1:-3]
+# a2 = a[2:-2]
+# a3 = a[3:-1]
+# a4 = a[4:]
+a0 = a[4:]
+a1 = a[3:-1]
 a2 = a[2:-2]
-a3 = a[3:-1]
+a3 = a[1:-3]
+a4 = a[0:-4]
 
-a_stack = np.vstack((a0,a1))
-print(np.diff(a_stack, axis=0))
+s1 = np.vstack((a0,a1))
+s1d = np.diff(s1, axis=0)
+s2 = np.vstack((a0,a2))
+s2d = np.diff(s2, axis=0)
+s3 = np.vstack((a0,a3))
+s3d = np.diff(s3, axis=0)
+s4 = np.vstack((a0,a4))
+s4d = np.diff(s4, axis=0)
 
-a_stack = np.vstack((a0,a2))
-print(np.diff(a_stack, axis=0))
+sds = np.vstack((s1d,s2d,s3d,s4d))
+ds = np.sum(sds, axis=0)
 
-a_stack = np.vstack((a0,a3))
-print(np.diff(a_stack, axis=0))
+print(a)
+print(s1d)
+print(s2d)
+print(s3d)
+print(s4d)
+print(ds)
