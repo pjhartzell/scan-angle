@@ -5,8 +5,8 @@ from traj_sa_funcs import read_las, swath_indices, traj_xyz
 import matplotlib.pyplot as plt
 
 
-# filename = "F:/Sitka/helipod/autoclass - Scanner 1 - 160503_011252_VQ480i - originalpoints_timesorted.las"
-filename = "F:/UH/C2_L2_sorted.las"
+# filename = "G:/Sitka/helipod/autoclass - Scanner 1 - 160503_011252_VQ480i - originalpoints_timesorted.las"
+filename = "G:/UH/C2_L2_sorted.las"
 count = 20000000
 min_delta = 15  # degrees
 min_pnts = 10
@@ -31,10 +31,6 @@ for idx1, idx2 in zip(indices[:-1], indices[1:]):
 
     # Scan angles from single sweep
     a = txyza[idx1:idx2,4]
-    a_unique = np.unique(a)
-
-    # We are interested in data from the scan angle extremities
-    # if a_unique.shape[0] > 3:
 
     low_idx = (a == (np.min(a)+1))
     high_idx = (a == (np.max(a)-1))
@@ -79,4 +75,4 @@ elapsed_time = time.time() - start_time
 print(elapsed_time)
 
 # np.savetxt("F:/Sitka/helipod/est_252.txt", traj_txyz, fmt="%0.6f,%0.3f,%0.3f,%0.3f")
-np.savetxt("F:/UH/est_252.txt", traj_txyz, fmt="%0.6f,%0.3f,%0.3f,%0.3f")
+np.savetxt("G:/UH/est_252.txt", traj_txyz, fmt="%0.6f,%0.3f,%0.3f,%0.3f")

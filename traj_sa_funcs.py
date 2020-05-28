@@ -38,7 +38,7 @@ def swath_indices(sa, j):
     sa = np.convolve(sa, np.ones(filter_size), 'valid') / filter_size
     sa = np.insert(sa, 0, sa[0]*np.ones(j))
     sa = np.append(sa, sa[-1]*np.ones(j))
-    r = np.round(sa)
+    sa = np.round(sa)
 
     d = np.diff(sa)
     d[d>0] = 1
@@ -108,17 +108,30 @@ def get_idx(indices, idx,
         return idx
 
 
+# def traj_xyz(L, H, alpha_l, alpha_h):
+#     b = np.sqrt(np.sum((H-L)**2, axis=1))
+#     beta_l = np.deg2rad(90 + alpha_l)
+#     beta_h = np.deg2rad(90 - alpha_h)
+#     alpha = np.deg2rad(alpha_h - alpha_l)
+#     gamma = beta_h - np.arcsin((L[:,2]-H[:,2]) / b)
+#     d = (b * np.sin(gamma)) / np.sin(alpha)
+#     theta = np.arctan2(H[:,1]-L[:,1], H[:,0]-L[:,0])
+#     x = L[:,0] + d*np.cos(beta_l)*np.cos(theta)
+#     y = L[:,1] + d*np.cos(beta_l)*np.sin(theta)
+#     z = L[:,2] + d*np.sin(beta_l)
+#     return np.mean(x), np.mean(y), np.mean(z)
+
 def traj_xyz(L, H, alpha_l, alpha_h):
-    b = np.sqrt(np.sum((H-L)**2))
+    b = np.sqrt(np.sum((H-L)**2, axis=1))
     beta_l = np.deg2rad(90 + alpha_l)
     beta_h = np.deg2rad(90 - alpha_h)
     alpha = np.deg2rad(alpha_h - alpha_l)
-    gamma = beta_h - np.arcsin((L[2]-H[2]) / b)
+    gamma = beta_h - np.arcsin((L[:,2]-H[:,2]) / b)
     d = (b * np.sin(gamma)) / np.sin(alpha)
-    theta = np.arctan2(H[1]-L[1], H[0]-L[0])
-    x = L[0] + d*np.cos(beta_l)*np.cos(theta)
-    y = L[1] + d*np.cos(beta_l)*np.sin(theta)
-    z = L[2] + d*np.sin(beta_l)
-    return x, y, z
+    theta = np.arctan2(H[:,1]-L[:,1], H[:,0]-L[:,0])
+    x = L[:,0] + d*np.cos(beta_l)*np.cos(theta)
+    y = L[:,1] + d*np.cos(beta_l)*np.sin(theta)
+    z = L[:,2] + d*np.sin(beta_l)
+    return np.mean(x), np.mean(y), np.mean(z)
 
 
