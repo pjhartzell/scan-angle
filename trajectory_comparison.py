@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 
 actual_traj_file = 'F:/UH/sbet_047_IGS08-UTM15N-Ellipsoid.txt'
-est_traj_file = 'F:/UH/est_10000.txt'
+est_traj_file = 'F:/UH/est_6400.txt'
 
 
 actual_traj = np.loadtxt(actual_traj_file, delimiter=',', skiprows=1)

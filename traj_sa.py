@@ -14,7 +14,7 @@ from traj_sa_funcs import read_las, time_block_indices, traj_xyz_mean, save_traj
 filename = "F:/UH/C2_L2_sorted.las"
 delta_t = 0.1       # Time block duration (seconds)
 min_delta_a = 15    # Minimum scan angle range within a time block (degrees)
-num_ests = 10000      # Number of trajectory estimates to average in a time block
+num_ests = 6400      # Number of trajectory estimates to average in a time block
 # ------------------------------------------------------------------------------
 
 
