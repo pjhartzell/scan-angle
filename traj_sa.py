@@ -39,8 +39,7 @@ for idx1, idx2 in zip(indices[:-1], indices[1:]):
 
             sort_idx = np.argsort(a)
             low_idx = sort_idx[0:num_ests]
-            # high_idx = sort_idx[-num_ests:]
-            high_idx = sort_idx[:-(num_ests+1):-1]
+            high_idx = sort_idx[-num_ests:]
 
             a_low = a[low_idx]
             a_high = a[high_idx]
