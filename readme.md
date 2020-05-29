@@ -8,7 +8,7 @@ time blocks and a single trajectory point computed for each time block. Each tim
 
 We have found that using hundreds to thousands of point pairs within each time block produces smoother trajectory solutions, essentially averaging out the error in the quantized (integer) scan angle values. The current method is naive in the sense that the user must specify the number of point pairs to average within each time block and a minimum range of scan angles (for geometric strength). It may be possible to determine an appropriate number of point pairs and scan angle range for each time block automatically.
 
-However, the value of producing a smooth (low random error) trajectory estimate is tempered by the fact that systematic errors due to aircraft pitch (particularly evident in the horizontal errors) will likely be larger than the random errors produced by this method. Note that if the scan angle values are per the LAS specification (scan angles are relative to nadir, thus incorporating aircraft roll), systematic errors due to aircraft roll should be small.
+However, the value of producing a smooth (low random error) trajectory estimate is tempered by the fact that systematic errors due to aircraft pitch (particularly evident in the horizontal errors) will likely be larger than the random errors produced by this method. Note that if the scan angle values are per the LAS specification (scan angles relative to nadir, thus incorporating aircraft roll), systematic errors due to aircraft roll should be small.
 
 ## Geometry sketch
 
