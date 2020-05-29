@@ -3,15 +3,23 @@ import numpy as np
 import pdal
 
 
-def read_las(filename, count):
+def read_las(filename, count=0):
 
-    json_pipe = [
-        {
-            "type":"readers.las", 
-            "filename":filename,
-            "count":count
-        }
-    ]
+    if count > 0:
+        json_pipe = [
+            {
+                "type":"readers.las", 
+                "filename":filename,
+                "count":count
+            }
+        ]
+    else:
+        json_pipe = [
+            {
+                "type":"readers.las", 
+                "filename":filename
+            }
+        ]
 
     pipeline = pdal.Pipeline(json.dumps(json_pipe))
     pipeline.validate()
@@ -25,6 +33,13 @@ def read_las(filename, count):
     a = view['ScanAngleRank']
 
     return np.vstack((t,x,y,z,a)).T
+
+
+def time_block_indices(t, delta_t):
+    t = t - t[0]
+    start_times = np.arange(0, t[-1], delta_t)
+    indices = np.searchsorted(t, start_times)
+    return indices
 
 
 def swath_indices(sa, j):
@@ -108,20 +123,7 @@ def get_idx(indices, idx,
         return idx
 
 
-# def traj_xyz(L, H, alpha_l, alpha_h):
-#     b = np.sqrt(np.sum((H-L)**2, axis=1))
-#     beta_l = np.deg2rad(90 + alpha_l)
-#     beta_h = np.deg2rad(90 - alpha_h)
-#     alpha = np.deg2rad(alpha_h - alpha_l)
-#     gamma = beta_h - np.arcsin((L[:,2]-H[:,2]) / b)
-#     d = (b * np.sin(gamma)) / np.sin(alpha)
-#     theta = np.arctan2(H[:,1]-L[:,1], H[:,0]-L[:,0])
-#     x = L[:,0] + d*np.cos(beta_l)*np.cos(theta)
-#     y = L[:,1] + d*np.cos(beta_l)*np.sin(theta)
-#     z = L[:,2] + d*np.sin(beta_l)
-#     return np.mean(x), np.mean(y), np.mean(z)
-
-def traj_xyz(L, H, alpha_l, alpha_h):
+def traj_xyz_mean(L, H, alpha_l, alpha_h):
     b = np.sqrt(np.sum((H-L)**2, axis=1))
     beta_l = np.deg2rad(90 + alpha_l)
     beta_h = np.deg2rad(90 - alpha_h)
@@ -133,5 +135,18 @@ def traj_xyz(L, H, alpha_l, alpha_h):
     y = L[:,1] + d*np.cos(beta_l)*np.sin(theta)
     z = L[:,2] + d*np.sin(beta_l)
     return np.mean(x), np.mean(y), np.mean(z)
+
+def traj_xyz(L, H, alpha_l, alpha_h):
+    b = np.sqrt(np.sum((H-L)**2))
+    beta_l = np.deg2rad(90 + alpha_l)
+    beta_h = np.deg2rad(90 - alpha_h)
+    alpha = np.deg2rad(alpha_h - alpha_l)
+    gamma = beta_h - np.arcsin((L[2]-H[2]) / b)
+    d = (b * np.sin(gamma)) / np.sin(alpha)
+    theta = np.arctan2(H[1]-L[1], H[0]-L[0])
+    x = L[:,0] + d*np.cos(beta_l)*np.cos(theta)
+    y = L[:,1] + d*np.cos(beta_l)*np.sin(theta)
+    z = L[:,2] + d*np.sin(beta_l)
+    return x, y, z
 
 
