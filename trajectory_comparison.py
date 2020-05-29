@@ -1,15 +1,10 @@
-import math
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
-import os
-import scipy
-from scipy.signal import savgol_filter
-from scipy.interpolate import make_lsq_spline
 
 
-actual_traj_file = 'F:/Sitka/helipod/apps_final_ATLANS-20160503_NAD83-UTM8N-Geoid12B.txt'
-est_traj_file = 'F:/Sitka/helipod/est_traj.txt'
+actual_traj_file = 'F:/UH/sbet_047_IGS08-UTM15N-Ellipsoid.txt'
+est_traj_file = 'F:/UH/est_10000.txt'
+
 
 actual_traj = np.loadtxt(actual_traj_file, delimiter=',', skiprows=1)
 est_traj = np.loadtxt(est_traj_file, delimiter=',')
@@ -46,7 +41,7 @@ axs[3].grid(True)
 figure = plt.gcf()
 figure.set_size_inches(18,9)
 plt.show()
-# plt.savefig("{}_{}_TrajectoryHeightDifference_{}_seconds_every_{} seconds.png".format(Area,flight,sample,every),bbox_inches='tight')
+# plt.savefig('Sitka_011252_Vertical.png', bbox_inches='tight')
 
 # Trajectory X and Y differences, roll/pitch/heading from actual trajectory
 fig, axs =plt.subplots(4)
@@ -70,4 +65,4 @@ axs[3].grid(True)
 figure = plt.gcf()
 figure.set_size_inches(18,9)
 plt.show()
-# plt.savefig("{}_{}_TrajectoryXYDifference_{}_seconds_every_{}_seconds.png".format(Area,flight,sample,every),bbox_inches='tight')
+# plt.savefig('Sitka_011252_Horizontal.png', bbox_inches='tight')

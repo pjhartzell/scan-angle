@@ -1,47 +1,64 @@
-import time
 import numpy as np
-import os
-from traj_sa_funcs import read_las, swath_indices, quality_metrics, get_idx
-import matplotlib.pyplot as plt
+from traj_sa_funcs import read_las, time_block_indices, traj_xyz_mean, save_traj
 
 
-filename = "F:/Creeping Fault/final - VQ-580 - 170822_192752_VQ-580 - originalpoints_timesorted.las"
-count = 1000000
-min_delta = 10  # degrees
-min_pnts = 5
-rate = 10  # Hz
+# ------------------------------------------------------------------------------
+# Sensor trajectory estimation from LAS scan angle rank field. Similar to
+# Gatziolis & McGaughey's multi-return method, the data is split into time
+# blocks and a single trajectory point estimated for each time block. 
+#
+# Note that the data must be sorted by time. This can be added to the pdal
+# pipeline in the read_las function if desired.
 
-x,y,z,t,sa = read_las(filename, count)
-
-indices = swath_indices(sa)
-delta_sa, num_pnts = quality_metrics(indices, sa)
-
-nominal_traj_times = np.arange(t[indices[0]], t[indices[-1]], 1/rate)
-print(nominal_traj_times.shape)
-
-idx = 0
-for i in range(nominal_traj_times.shape[0]-1):
-    t_cur = nominal_traj_times[i]
-    t_next = nominal_traj_times[i+1]
-    idx = get_idx(
-        indices, idx,
-        t, t_cur, t_next,
-        delta_sa, num_pnts,
-        min_delta, min_pnts)
-    print("idx = {}".format(idx))
-    times = t[indices[idx]:indices[idx+1]]
-    np.set_printoptions(precision=16)
-    print(times[0:200])
-    input("Press a key")
-    xp,yp,zp = get_pnts(x,y,z,t,sa)
+# USER INPUT
+filename = "F:/UH/C2_L2_sorted.las"
+delta_t = 0.1       # Time block duration (seconds)
+min_delta_a = 15    # Minimum scan angle range within a time block (degrees)
+num_ests = 10000      # Number of trajectory estimates to average in a time block
+# ------------------------------------------------------------------------------
 
 
+# Get time, x, y, z, and scan angle rank from timesorted LAS file
+txyza = read_las(filename)
 
+# Time block start locations
+indices = time_block_indices(txyza[:,0], delta_t)
 
+traj_txyz = []
 
+# Compute a mean trajectory location for each time block
+for idx1, idx2 in zip(indices[:-1], indices[1:]):
 
-# sa_r = np.array([2,2,1,1,0,0,-1,-1,-2,-2,2,2,1,1,0,0,-1,-1,-2,-2,2,2,1,1,0,0,-1,-1,-2,-2,2,2,1,1,0,0,-1,-1,-2,-2])
-# sa_o = np.array([2,2,1,1,0,0,-1,-1,-2,-2,-2,-2,-1,-1,0,0,1,1,2,2,2,2,1,1,0,0,-1,-1,-2,-2,-2,-2,-1,-1,0,0,1,1,2,2])
-# sa_o = np.array([2,2,0,0,-1,-1,-2,-2,-2,-2,-1,-1,0,0,1,1,2,2,2,2,1,1,0,0,-1,-1,-2,-2,-2,-2,-1,-1,0,0,1,1,2,2])
+    a = txyza[idx1:idx2,4]
 
-# print(swath_indices(sa))
+    # Check for sufficient geometry
+    if (np.max(a) - np.min(a)) >= min_delta_a:
+
+        # Check for sufficient number of points
+        if a.shape[0] > (2*num_ests):
+
+            sort_idx = np.argsort(a)
+            low_idx = sort_idx[0:num_ests]
+            # high_idx = sort_idx[-num_ests:]
+            high_idx = sort_idx[:-(num_ests+1):-1]
+
+            a_low = a[low_idx]
+            a_high = a[high_idx]
+
+            # Guard against parallel rays
+            if not np.isin(a_low, a_high).any():  
+
+                xyz = txyza[idx1:idx2,1:4]
+                t = txyza[idx1:idx2,0]
+
+                x_mean, y_mean, z_mean = traj_xyz_mean(
+                    xyz[low_idx,:],
+                    xyz[high_idx,:],
+                    a_low,
+                    a_high)
+                t_mean = np.mean(t[np.hstack((low_idx, high_idx))])
+
+                traj_txyz.append([t_mean, x_mean, y_mean, z_mean])
+
+save_traj(filename, traj_txyz)
+

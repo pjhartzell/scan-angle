@@ -1,9 +1,0 @@
-[
-    "D:/Creeping Fault/final - VQ-580 - 170822_195241_VQ-580 - originalpoints.las",
-    {
-        "type":"filters.sort",
-        "dimension":"GpsTime",
-        "order":"ASC"
-    },
-    "D:/Creeping Fault/final - VQ-580 - 170822_195241_VQ-580 - originalpoints_timesorted.las"
-]
