@@ -1,3 +1,4 @@
+import os
 import json
 import numpy as np
 import pdal
@@ -131,10 +132,13 @@ def traj_xyz_mean(L, H, alpha_l, alpha_h):
     gamma = beta_h - np.arcsin((L[:,2]-H[:,2]) / b)
     d = (b * np.sin(gamma)) / np.sin(alpha)
     theta = np.arctan2(H[:,1]-L[:,1], H[:,0]-L[:,0])
+
     x = L[:,0] + d*np.cos(beta_l)*np.cos(theta)
     y = L[:,1] + d*np.cos(beta_l)*np.sin(theta)
     z = L[:,2] + d*np.sin(beta_l)
+
     return np.mean(x), np.mean(y), np.mean(z)
+
 
 def traj_xyz(L, H, alpha_l, alpha_h):
     b = np.sqrt(np.sum((H-L)**2))
@@ -144,9 +148,21 @@ def traj_xyz(L, H, alpha_l, alpha_h):
     gamma = beta_h - np.arcsin((L[2]-H[2]) / b)
     d = (b * np.sin(gamma)) / np.sin(alpha)
     theta = np.arctan2(H[1]-L[1], H[0]-L[0])
-    x = L[:,0] + d*np.cos(beta_l)*np.cos(theta)
-    y = L[:,1] + d*np.cos(beta_l)*np.sin(theta)
-    z = L[:,2] + d*np.sin(beta_l)
+    x = L[0] + d*np.cos(beta_l)*np.cos(theta)
+    y = L[1] + d*np.cos(beta_l)*np.sin(theta)
+    z = L[2] + d*np.sin(beta_l)
     return x, y, z
 
 
+def save_traj(in_name, traj_txyz):
+    root, _ = os.path.splitext(in_name)
+    out_name = root + '_EstimatedTrajectory.txt'
+    np.savetxt(out_name, traj_txyz, fmt="%0.6f,%0.3f,%0.3f,%0.3f")
+
+
+def a_linfit(t, a):
+    t = t - t[0]
+    A = np.vstack((t, np.ones(len(t)))).T
+    m, b = np.linalg.inv(np.dot(A.T, A)).dot(A.T).dot(a)
+    a_fit = m*t + b
+    return a_fit, m, b
