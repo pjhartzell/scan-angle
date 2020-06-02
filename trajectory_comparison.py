@@ -8,14 +8,18 @@ from scipy.signal import savgol_filter
 from scipy.interpolate import make_lsq_spline
 
 
-actual_traj_file = 'G:/Sitka/helipod/apps_final_ATLANS-20160503_NAD83-UTM8N-Geoid12B.txt'
-est_traj_file = 'G:/Sitka/helipod/linfit200_discard5.txt'
+# actual_traj_file = 'G:/Sitka/helipod/apps_final_ATLANS-20160503_NAD83-UTM8N-Geoid12B.txt'
+# est_traj_file = 'G:/Sitka/helipod/multi-return_trj.txt'
 
-# actual_traj_file = 'G:/UH/sbet_047_IGS08-UTM15N-Ellipsoid.txt'
-# est_traj_file = 'G:/UH/twosol_discard5.txt'
+actual_traj_file = 'G:/UH/sbet_047_IGS08-UTM15N-Ellipsoid.txt'
+est_traj_file = 'G:/UH/multi-return_trj.txt'
 
 actual_traj = np.loadtxt(actual_traj_file, delimiter=',', skiprows=1)
-est_traj = np.loadtxt(est_traj_file, delimiter=',')
+est_traj = np.loadtxt(est_traj_file, delimiter=',', skiprows=1)
+t_est = est_traj[:,3]
+t_est = np.expand_dims(t_est, axis=0)
+xyz_est = est_traj[:,0:3]
+est_traj = np.hstack((t_est.T, xyz_est))
 
 # Trim actual trajectory to time bounds of estimated trajectory
 min_t = np.min(est_traj[:,0])
