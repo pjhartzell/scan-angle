@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-actual_traj_file = 'F:/UH/sbet_047_IGS08-UTM15N-Ellipsoid.txt'
-est_traj_file = 'F:/UH/est_6400.txt'
+actual_traj_file = 'G:/Sitka/helipod/apps_final_ATLANS-20160503_NAD83-UTM8N-Geoid12B.txt'
+est_traj_file = 'G:/Sitka/helipod/orig400.txt'
 
 
 actual_traj = np.loadtxt(actual_traj_file, delimiter=',', skiprows=1)
