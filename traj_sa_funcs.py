@@ -30,7 +30,21 @@ def time_block_indices(t, delta_t):
     t = t - t[0]
     start_times = np.arange(0, t[-1], delta_t)
     indices = np.searchsorted(t, start_times)
+
     return indices
+
+
+def point_pair_indices(a, min_delta_a):
+    sort_idx = np.argsort(a)
+    a_sorted = a[sort_idx]
+
+    delta_a = a_sorted[::-1] - a_sorted[0:]
+    threshold_idx = len(delta_a) - np.searchsorted(delta_a[::-1], min_delta_a)
+
+    low_idx = sort_idx[0:threshold_idx]
+    high_idx = sort_idx[:-threshold_idx-1:-1]
+
+    return low_idx, high_idx
 
 
 def traj_xyz_mean(L, H, alpha_l, alpha_h):
@@ -53,40 +67,3 @@ def save_traj(in_name, traj_txyz):
     root, _ = os.path.splitext(in_name)
     out_name = root + '_EstimatedTrajectory.txt'
     np.savetxt(out_name, traj_txyz, fmt="%0.6f,%0.3f,%0.3f,%0.3f")
-
-
-def swath_indices(sa, j):
-    # Given an array of scan angles that are ordered (ascending) in time, detect
-    # change from increasing to decreasing scan angle, or vice versa. Returns
-    # indices into the passed array at the scan angle direction change
-    # locations.
-
-    # mitigate scan angle 'jitter' caused by platform dynamics
-    filter_size = j*2 + 1
-    sa = np.convolve(sa, np.ones(filter_size), 'valid') / filter_size
-    sa = np.insert(sa, 0, sa[0]*np.ones(j))
-    sa = np.append(sa, sa[-1]*np.ones(j))
-    sa = np.round(sa)
-
-    d = np.diff(sa)
-    d[d>0] = 1
-    d[d<0] = -1
-
-    idx = np.where(d!=0)[0]
-    d_subset = d[idx]
-
-    d2 = np.diff(d_subset)
-    idx2 = np.where(d2!=0)[0]
-
-    # np.set_printoptions(threshold=np.inf)
-    # print(sa)
-    # print(d)
-    # print(idx)
-    # print(d_subset)
-    # print(d2)
-    # print(idx2)
-    # print(idx[idx2+1])
-    # print(sa[idx[idx2+1]])
-    # np.set_printoptions(threshold=1000)
-
-    return idx[idx2+1] + 1
