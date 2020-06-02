@@ -15,7 +15,6 @@ from traj_sa_funcs import (
 # pipeline in the read_las function if desired.
 
 # USER INPUT
-filename = 'G:/Sitka/helipod/autoclass - Scanner 1 - 160503_011252_VQ480i - originalpoints_timesorted.las'
 filename = 'G:/UH/C2_L2_sorted.las'
 delta_t = 0.1       # Time block duration (seconds)
 min_delta_a = 15    # Minimum scan angle difference between point pairs (degrees)
