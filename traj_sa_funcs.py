@@ -30,7 +30,21 @@ def time_block_indices(t, delta_t):
     t = t - t[0]
     start_times = np.arange(0, t[-1], delta_t)
     indices = np.searchsorted(t, start_times)
+
     return indices
+
+
+def point_pair_indices(a, min_delta_a):
+    sort_idx = np.argsort(a)
+    a_sorted = a[sort_idx]
+
+    delta_a = a_sorted[::-1] - a_sorted[0:]
+    threshold_idx = len(delta_a) - np.searchsorted(delta_a[::-1], min_delta_a)
+
+    low_idx = sort_idx[0:threshold_idx]
+    high_idx = sort_idx[:-threshold_idx-1:-1]
+
+    return low_idx, high_idx
 
 
 def traj_xyz_mean(L, H, alpha_l, alpha_h):
