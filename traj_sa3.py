@@ -1,8 +1,8 @@
 import time
 import numpy as np
-from traj_sa_funcs import read_las, time_block_indices, traj_xyz_mean, save_traj
+from traj_sa_funcs import read_las, swath_indices, traj_xyz_mean, save_traj
 
-# Same as master, but throws out 5 degrees and computed by swath rater than time block
+# Same as master, but throws out 5 degrees and computes by swath rather than by time block
 # ------------------------------------------------------------------------------
 # Sensor trajectory estimation from LAS scan angle rank field. Similar to
 # Gatziolis & McGaughey's multi-return method, the data is split into time
@@ -17,6 +17,7 @@ delta_t = 0.1       # Time block duration (seconds)
 min_delta_a = 15    # Minimum scan angle range within a time block (degrees)
 num_ests = 400      # Number of trajectory estimates to average in a time block
 discard = 5
+jitter = 8
 # ------------------------------------------------------------------------------
 
 
@@ -26,13 +27,14 @@ txyza = read_las(filename)
 start_time = time.time()
 
 # Time block start locations
-indices = time_block_indices(txyza[:,0], delta_t)
+indices = swath_indices(txyza[:,4], jitter)
 
 traj_txyz = []
 
-# Compute a mean trajectory location for each time block
+# Compute a mean trajectory location for each swath
 for idx1, idx2 in zip(indices[:-1], indices[1:]):
 
+    # Swath data
     a = txyza[idx1:idx2,4]
     xyz = txyza[idx1:idx2,1:4]
     t = txyza[idx1:idx2,0]
