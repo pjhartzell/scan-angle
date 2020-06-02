@@ -2,7 +2,7 @@ import time
 import numpy as np
 from traj_sa_funcs import read_las, time_block_indices, traj_xyz_mean, save_traj
 
-# Same as master, but throws out 5 degrees on extremeties in each time block
+# Same as master, but throws out 5 degrees and computed by swath rater than time block
 # ------------------------------------------------------------------------------
 # Sensor trajectory estimation from LAS scan angle rank field. Similar to
 # Gatziolis & McGaughey's multi-return method, the data is split into time
