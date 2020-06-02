@@ -12,10 +12,10 @@ from traj_sa_funcs import read_las, swath_indices, traj_xyz_mean, save_traj
 # pipeline in the read_las function if desired.
 
 # USER INPUT
-filename = "G:/UH/C2_L2_sorted.las"
+filename = "G:/Sitka/helipod/autoclass - Scanner 1 - 160503_011252_VQ480i - originalpoints_timesorted.las"
 delta_t = 0.1       # Time block duration (seconds)
 min_delta_a = 15    # Minimum scan angle range within a time block (degrees)
-num_ests = 400      # Number of trajectory estimates to average in a time block
+num_ests = 200      # Number of trajectory estimates to average in a time block
 discard = 5
 jitter = 8
 # ------------------------------------------------------------------------------
