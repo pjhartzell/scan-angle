@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 from traj_sa_funcs import read_las, swath_indices, traj_xyz_mean, save_traj, a_linfit
 
 
-filename = "F:/Sitka/helipod/autoclass - Scanner 1 - 160503_011252_VQ480i - originalpoints_timesorted.las"
-# filename = "F:/UH/C2_L2_sorted.las"
+# filename = "F:/Sitka/helipod/autoclass - Scanner 1 - 160503_011252_VQ480i - originalpoints_timesorted.las"
+filename = "G:/UH/C2_L2_sorted.las"
 count = 200000
 min_delta_a = 15  # degrees
 num_ests = 400

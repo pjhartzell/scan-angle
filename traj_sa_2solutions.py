@@ -5,7 +5,7 @@ from traj_sa_funcs import read_las, swath_indices, traj_xyz, save_traj
 
 
 # filename = "F:/Sitka/helipod/autoclass - Scanner 1 - 160503_011252_VQ480i - originalpoints_timesorted.las"
-filename = "F:/UH/C2_L2_sorted.las"
+filename = "G:/UH/C2_L2_sorted.las"
 count = 200000
 min_delta_a = 15  # degrees
 # min_bin_pnts = 100
@@ -69,13 +69,13 @@ for idx1, idx2 in zip(indices[:-1], indices[1:]):
 
             traj_txyz.append([(t1+t2)/2, (x1+x2)/2, (y1+y2)/2, (z1+z2)/2])
 
-            if i >= 430:
+            # if i >= 430:
 
-                print(hist)
-                print(np.median(hist[hist>0]), np.median(hist[hist>0])*0.9)
-                print((z1+z2)/2)
-                plt.plot(t, a,'.')
-                plt.show()
+            #     print(hist)
+            #     print(np.median(hist[hist>0]), np.median(hist[hist>0])*0.9)
+            #     print((z1+z2)/2)
+            #     plt.plot(t, a,'.')
+            #     plt.show()
                 # input("hit a key")
 
             # if (z1+z2)/2 < 525:
