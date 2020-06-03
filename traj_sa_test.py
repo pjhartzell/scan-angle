@@ -16,22 +16,22 @@ actual_traj = np.loadtxt(actual_traj_file, delimiter=',', skiprows=1)
 
 # Variables
 delta_t = 0.1
-# min_delta_a = np.array([1,2,4,6,8,10,15,20,25,30,35,40,42,44,46])
-min_delta_a = 25
+pct_pairs = np.array([1,5,10,20,30,40,50,60,70,80,90,95,100])
+# pct_pairs = 50
 min_num_sol = 20
-# trim_a = 5
-trim_a = np.array([0,1,2,3,4,5,6,7,8,9,10])
+trim_a = 1
+# trim_a = np.array([0,1,2,3,4,5,6,7,8,9,10])
 
 # Computations
 mean_offset = []
 roughness = []
-for ta in trim_a:
-# for mda in min_delta_a:
+# for ta in trim_a:
+for pp in pct_pairs:
 
     # Estimated Trajectory
     start_time = time.time()
-    traj_txyz = traj_sa(delta_t, min_delta_a, min_num_sol, ta, txyza)
-    # traj_txyz = traj_sa(delta_t, mda, min_num_sol, trim_a, txyza)
+    # traj_txyz = traj_sa(delta_t, min_delta_a, min_num_sol, ta, txyza)
+    traj_txyz = traj_sa(delta_t, pp, min_num_sol, trim_a, txyza)
     print("Iteration time = {}".format(time.time() - start_time))
 
     # Offset and Roughness
@@ -52,27 +52,27 @@ for ta in trim_a:
 # print(mean_offset)
 # print(roughness)
 
+fig, (ax1, ax2) = plt.subplots(1,2)
+ax1.plot(pct_pairs, mean_offset, '.')
+ax1.set_title('Mean Offset')
+ax1.set_xlabel('pct_pairs (%)')
+ax1.set_ylabel('Z Offset (m)')
+ax2.plot(pct_pairs, roughness, '.')
+ax2.set_title('Roughness (Demeaned Std.)')
+ax2.set_xlabel('pct_pairs (%)')
+ax2.set_ylabel('Std. (+/-m)')
+plt.show()
+
 # fig, (ax1, ax2) = plt.subplots(1,2)
-# ax1.plot(min_delta_a, mean_offset, '.')
+# ax1.plot(trim_a, mean_offset, '.')
 # ax1.set_title('Mean Offset')
-# ax1.set_xlabel('min_delta_a (degrees)')
+# ax1.set_xlabel('trim_a (degrees)')
 # ax1.set_ylabel('Z Offset (m)')
-# ax2.plot(min_delta_a, roughness, '.')
+# ax2.plot(trim_a, roughness, '.')
 # ax2.set_title('Roughness (Demeaned Std.)')
 # ax2.set_xlabel('min_delta_a (degrees)')
 # ax2.set_ylabel('Std. (+/-m)')
 # plt.show()
-
-fig, (ax1, ax2) = plt.subplots(1,2)
-ax1.plot(trim_a, mean_offset, '.')
-ax1.set_title('Mean Offset')
-ax1.set_xlabel('trim_a (degrees)')
-ax1.set_ylabel('Z Offset (m)')
-ax2.plot(trim_a, roughness, '.')
-ax2.set_title('Roughness (Demeaned Std.)')
-ax2.set_xlabel('min_delta_a (degrees)')
-ax2.set_ylabel('Std. (+/-m)')
-plt.show()
 
 
 
