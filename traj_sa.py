@@ -17,9 +17,11 @@ from traj_sa_funcs import (
 # USER INPUT
 filename = 'G:/UH/C2_L2_sorted.las'
 delta_t = 0.1       # Time block duration (seconds)
-min_delta_a = 15    # Minimum scan angle difference between point pairs (degrees)
-min_num_sol = 20    # Minimum number of ray intersections
-trim_a = 5          # Extent of extreme scan angles to remove (degrees)
+trim_a = 5          # Extent of extreme scan angles to remove (deg)
+min_delta_a = 15    # Minimum scan angle difference between point pairs (deg)
+min_num_sol = 20    # Minimum number of ray intersections. This is typically not
+                    # going to be a concern unless there are areas of very few 
+                    # returns (e.g., over water) or very small time blocks.
 # ------------------------------------------------------------------------------
 
 
