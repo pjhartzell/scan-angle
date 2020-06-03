@@ -15,11 +15,11 @@ from traj_sa_funcs import (
 # pipeline in the read_las function if desired.
 
 # USER INPUT
-filename = 'G:/UH/C2_L2_sorted.las'
+filename = 'F:/UH/C2_L2_sorted.las'
 delta_t = 0.1       # Time block duration (seconds)
-min_delta_a = 15    # Minimum scan angle difference between point pairs (degrees)
+pct_pairs = 50      # Percentage of point pairs to use (1-100)
 min_num_sol = 20    # Minimum number of ray intersections
-trim_a = 5          # Extent of extreme scan angles to remove (degrees)
+trim_a = 1          # Extent of extreme scan angles to remove (degrees)
 # ------------------------------------------------------------------------------
 
 
@@ -48,8 +48,8 @@ for idx1, idx2 in zip(indices[:-1], indices[1:]):
     # Check that we still have sufficient data
     if len(a) >= (min_num_sol*2):
 
-        # Point pairs with sufficient scan angle geometry
-        low_idx, high_idx = point_pair_indices(a, min_delta_a)
+        # Point pairs indices
+        low_idx, high_idx = point_pair_indices(a, pct_pairs)
 
         # Check that we still have sufficient data
         if len(low_idx) >= min_num_sol:

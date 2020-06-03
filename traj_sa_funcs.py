@@ -34,15 +34,15 @@ def time_block_indices(t, delta_t):
     return indices
 
 
-def point_pair_indices(a, min_delta_a):
+def point_pair_indices(a, pct_pairs):
     sort_idx = np.argsort(a)
-    a_sorted = a[sort_idx]
 
-    delta_a = a_sorted[::-1] - a_sorted[0:]
-    threshold_idx = len(delta_a) - np.searchsorted(delta_a[::-1], min_delta_a)
+    total_num_pairs = int(len(sort_idx)/2)
+    use_num_pairs = int(total_num_pairs * (pct_pairs/100))
 
-    low_idx = sort_idx[0:threshold_idx]
-    high_idx = sort_idx[:-threshold_idx-1:-1]
+    # Points are paired from outside in with respect to scan angle
+    low_idx = sort_idx[0:use_num_pairs]
+    high_idx = sort_idx[:-use_num_pairs-1:-1]
 
     return low_idx, high_idx
 
