@@ -8,11 +8,11 @@ from scipy.signal import savgol_filter
 from scipy.interpolate import make_lsq_spline
 
 
-# actual_traj_file = 'G:/Sitka/helipod/apps_final_ATLANS-20160503_NAD83-UTM8N-Geoid12B.txt'
-# est_traj_file = 'G:/Sitka/helipod/linfit200_discard5.txt'
+actual_traj_file = 'F:/Sitka/helipod/apps_final_ATLANS-20160503_NAD83-UTM8N-Geoid12B.txt'
+est_traj_file = 'F:/Sitka/helipod/selective_ta5_mda15_j8.txt'
 
-actual_traj_file = 'F:/UH/sbet_047_IGS08-UTM15N-Ellipsoid.txt'
-est_traj_file = 'F:/UH/selective_ta5_mda15_j8.txt'
+# actual_traj_file = 'F:/UH/sbet_047_IGS08-UTM15N-Ellipsoid.txt'
+# est_traj_file = 'F:/UH/selective_ta5_mda15_j8.txt'
 
 actual_traj = np.loadtxt(actual_traj_file, delimiter=',', skiprows=1)
 est_traj = np.loadtxt(est_traj_file, delimiter=',')

@@ -19,7 +19,7 @@ from traj_sa_funcs import (
 # angle values.
 
 # USER INPUT
-filename = "F:/UH/C2_L2_sorted.las"
+filename = "F:/Sitka/helipod/autoclass - Scanner 1 - 160503_011252_VQ480i - originalpoints_timesorted.las"
 trim_a = 5          # Extent of extreme scan angles to remove (deg)
 min_delta_a = 15    # Minimum scan angle difference between point pairs (deg)
 jitter = 8          # Half-size of box filter applied to scan angles when 
@@ -56,7 +56,7 @@ for idx1, idx2 in zip(indices[:-1], indices[1:]):
         low_idx, high_idx = point_pair_indices(a, min_delta_a)
 
         # Check that we still have sufficient data
-        if len(low_idx == 2) and len(high_idx == 2):
+        if len(low_idx) == 2 and len(high_idx) == 2:
 
             # Mean trajectory solution in space and time
             x_mean, y_mean, z_mean = traj_xyz_mean(
