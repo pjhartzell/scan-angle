@@ -43,6 +43,9 @@ The sketch below outlines the basic geometry of the point pair triangle solution
 
 ## Method #2 Example: Sitka, AK, Flightline 160503_011252
 
+![](./img/sitka/method2/vt-mina15_trim5.png)
+![](./img/sitka/method2/hz-mina15_trim5.png)
+
 ## Branch details
 - `master` and `selective` branches are explained above.
 - `percentage` uses a percentage (instead of a minimum total scan angle threshold) of point pairs (ordered by decreasing total scan angle) used in the time block trajectory estimate. This is a more generic approach as it does not require user knowledge of the scan angle limits in the data. However, it can produce slightly worse results than using a total scan angle threshold. The code change is quite minor, and could be an option in the eventual PDAL filter.
