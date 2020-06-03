@@ -90,9 +90,3 @@ def save_traj(in_name, traj_txyz):
     np.savetxt(out_name, traj_txyz, fmt="%0.6f,%0.3f,%0.3f,%0.3f")
 
 
-def a_linfit(t, a):
-    t = t - t[0]
-    A = np.vstack((t, np.ones(len(t)))).T
-    m, b = np.linalg.inv(np.dot(A.T, A)).dot(A.T).dot(a)
-    a_fit = m*t + b
-    return a_fit, m, b
