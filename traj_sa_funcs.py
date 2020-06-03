@@ -67,3 +67,51 @@ def save_traj(in_name, traj_txyz):
     root, _ = os.path.splitext(in_name)
     out_name = root + '_EstimatedTrajectory.txt'
     np.savetxt(out_name, traj_txyz, fmt="%0.6f,%0.3f,%0.3f,%0.3f")
+
+
+def traj_sa(delta_t, min_delta_a, min_num_sol, trim_a, txyza):
+    # Time block start locations
+    indices = time_block_indices(txyza[:,0], delta_t)
+
+    traj_txyz = []
+
+    # Compute a mean trajectory location for each time block
+    for idx1, idx2 in zip(indices[:-1], indices[1:]):
+
+        # Time block data
+        a = txyza[idx1:idx2,4]
+        xyz = txyza[idx1:idx2,1:4]
+        t = txyza[idx1:idx2,0]
+
+        # print(np.min(a))
+        # print(np.max(a))
+
+        # Discard extreme scan angles
+        keep = np.logical_and(a >= (np.min(a)+trim_a), a <= (np.max(a)-trim_a))
+        a = a[keep]
+        xyz = xyz[keep,:]
+        t = t[keep]
+
+        # Check that we still have sufficient data
+        if len(a) >= (min_num_sol*2):
+
+            # Point pairs with sufficient scan angle geometry
+            low_idx, high_idx = point_pair_indices(a, min_delta_a)
+
+            # print(len(low_idx))
+
+            # Check that we still have sufficient data
+            if len(low_idx) >= min_num_sol:
+
+                # Mean trajectory solution in space and time
+                x_mean, y_mean, z_mean = traj_xyz_mean(
+                    xyz[low_idx,:],
+                    xyz[high_idx,:],
+                    a[low_idx],
+                    a[high_idx])
+                t_mean = np.mean(t[np.hstack((low_idx, high_idx))])
+
+                traj_txyz.append([t_mean, x_mean, y_mean, z_mean])
+
+    return np.asarray(traj_txyz)
+
