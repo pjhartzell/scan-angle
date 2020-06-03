@@ -1,56 +1,63 @@
 import time
 import numpy as np
 import matplotlib.pyplot as plt
-from traj_sa_funcs import read_las, swath_indices, traj_xyz, save_traj
+from traj_sa_funcs import read_las, sweep_indices, traj_xyz, save_traj
 
+# ------------------------------------------------------------------------------
+# Alternate sensor trajectory estimation that selects two point pairs based on
+# their temporal location within two scan angle rank "bins" in a single sweep of
+# the lidar mirror. By selecting point pairs from the temporal extremities of
+# two common scan angle bins (one bin is comprised of scan angles close to the
+# maximum scan angle in a single sweep of the lidar mirror, the other bin from
+# angles close to the minimum), the average of the two point pair solutions will
+# cancel most of the scan angle quantization error.
 
-filename = "G:/Sitka/helipod/autoclass - Scanner 1 - 160503_011252_VQ480i - originalpoints_timesorted.las"
-# filename = "G:/UH/C2_L2_sorted.las"
-count = 200000
+# This method works well when sensor dynamics have a minimal impact on the scan
+# angle values.
+
+# USER INPUT
+filename = "G:/UH/C2_L2_sorted.las"
 min_delta_a = 15  # degrees
-# min_bin_pnts = 100
 jitter = 8
+# ------------------------------------------------------------------------------
 
-txyza = read_las(filename, count=0)
 
-start_time = time.time()
+# Get time, x, y, z, and scan angle rank from timesorted LAS file
+txyza = read_las(filename)
 
-indices = swath_indices(txyza[:,4], jitter)
+indices = sweep_indices(txyza[:,4], jitter)
 
-# np.set_printoptions(threshold=5000)
-# print(txyza[indices[0]:indices[0]+499,4])
-# exit()
-
-i = 1
 traj_txyz = []
-for idx1, idx2 in zip(indices[:-1], indices[1:]):
-    # print(idx1, idx2)
 
-    # Swath data
+# Compute a mean trajectory location for each time block
+for idx1, idx2 in zip(indices[:-1], indices[1:])
+
+    # Sweep data
     a = txyza[idx1:idx2,4]
     xyz = txyza[idx1:idx2,1:4]
     t = txyza[idx1:idx2,0]
 
-    # Max and min scan angles introduce uncompensated systematic error
-    keep = np.logical_and(a > (np.min(a)+4), a < (np.max(a)-4))
+    # Discard extreme scan angles
+    keep = np.logical_and(a >= (np.min(a)+trim_a), a <= (np.max(a)-trim_a))
     a = a[keep]
     xyz = xyz[keep,:]
     t = t[keep]
 
-    if a.any():
+    # Check that we still have data (need at least 4 points)
+    if len(a) >= 4
 
-        # We are interested in the maximum and minimum scan angles with highly populated bins
+        # Point pair indices
+        low_idx, high_idx = point_pair_indices
+
+        # We are interested in the maximum and minimum scan angles with highly
+        # populated bins
         hist, _ = np.histogram(a, bins=181, range=(-90.5,90.5))
-        # print(np.max(hist), np.max(hist)*0.8, np.median(hist[hist>0]), np.median(hist[hist>0])*0.9)
         full_bins = np.argwhere(hist >= np.median(hist[hist>0])*1.0)
         min_full_bin_a = full_bins[0] - 90
         max_full_bin_a = full_bins[-1] - 90
 
-        # print(hist)
-        # print(min_full_bin_a, max_full_bin_a)
-        # input('hit a key...')
-
-        if (max_full_bin_a - min_full_bin_a) >= min_delta_a:  # Sufficient geometry
+        # Check that our point pairs have sufficient scan angle geometry
+        if (max_full_bin_a - min_full_bin_a) >= min_delta_a:
 
             low_idx = (a == min_full_bin_a)
             high_idx = (a == max_full_bin_a)
@@ -69,41 +76,4 @@ for idx1, idx2 in zip(indices[:-1], indices[1:]):
 
             traj_txyz.append([(t1+t2)/2, (x1+x2)/2, (y1+y2)/2, (z1+z2)/2])
 
-            # if i >= 430:
-
-            #     print(hist)
-            #     print(np.median(hist[hist>0]), np.median(hist[hist>0])*0.9)
-            #     print((z1+z2)/2)
-            #     plt.plot(t, a,'.')
-            #     plt.show()
-                # input("hit a key")
-
-            # if (z1+z2)/2 < 525:
-            #     print("i={}".format(i))
-            #     exit()
-
-            
-
-            # print('saved record {}'.format(i))
-            # print(x_mean, y_mean, z_mean, t_mean)
-            # input("Hit a key...")
-            i += 1
-            # print(i)
-
-# txyz = np.asarray(traj_txyz)
-# t = txyz[:,0]
-# x = txyz[:,1]
-# y = txyz[:,2]
-# z = txyz[:,3]
-# filter_size = 200
-# x = np.convolve(x, np.ones(filter_size), 'same') / filter_size
-# y = np.convolve(y, np.ones(filter_size), 'same') / filter_size
-# z = np.convolve(z, np.ones(filter_size), 'same') / filter_size
-# traj_txyz = np.vstack((t,x,y,z)).T
-
-elapsed_time = time.time() - start_time
-print(elapsed_time)
-
 save_traj(filename, traj_txyz)
-
-np.set_printoptions(threshold=1000)

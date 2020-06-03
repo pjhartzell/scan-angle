@@ -4,23 +4,13 @@ import numpy as np
 import pdal
 
 
-def read_las(filename, count=0):
-
-    if count > 0:
-        json_pipe = [
-            {
-                "type":"readers.las", 
-                "filename":filename,
-                "count":count
-            }
-        ]
-    else:
-        json_pipe = [
-            {
-                "type":"readers.las", 
-                "filename":filename
-            }
-        ]
+def read_las(filename):
+    json_pipe = [
+        {
+            "type":"readers.las", 
+            "filename":filename
+        }
+    ]
 
     pipeline = pdal.Pipeline(json.dumps(json_pipe))
     pipeline.validate()
@@ -36,20 +26,15 @@ def read_las(filename, count=0):
     return np.vstack((t,x,y,z,a)).T
 
 
-def time_block_indices(t, delta_t):
-    t = t - t[0]
-    start_times = np.arange(0, t[-1], delta_t)
-    indices = np.searchsorted(t, start_times)
-    return indices
-
-
-def swath_indices(sa, j):
+def sweep_indices(sa, j):
     # Given an array of scan angles that are ordered (ascending) in time, detect
     # change from increasing to decreasing scan angle, or vice versa. Returns
-    # indices into the passed array at the scan angle direction change
-    # locations.
+    # indices into the passed array at the approximate scan angle direction
+    # change locations. The change locations are approximate due to a smoothing
+    # filter that is applied to the scan angles to make the method resistant to
+    # temporal "jitter" in the scan angle data.
 
-    # mitigate scan angle 'jitter' caused by platform dynamics
+    # mitigate scan angle "jitter" caused by platform dynamics
     filter_size = j*2 + 1
     sa = np.convolve(sa, np.ones(filter_size), 'valid') / filter_size
     sa = np.insert(sa, 0, sa[0]*np.ones(j))
@@ -66,62 +51,7 @@ def swath_indices(sa, j):
     d2 = np.diff(d_subset)
     idx2 = np.where(d2!=0)[0]
 
-    # np.set_printoptions(threshold=np.inf)
-    # print(sa)
-    # print(d)
-    # print(idx)
-    # print(d_subset)
-    # print(d2)
-    # print(idx2)
-    # print(idx[idx2+1])
-    # print(sa[idx[idx2+1]])
-    # np.set_printoptions(threshold=1000)
-
     return idx[idx2+1] + 1
-
-
-def quality_metrics(indices, sa):
-
-    num_indices = indices.shape[0]
-    delta_sa = np.zeros((num_indices-1))
-    min_pnts = np.zeros((num_indices-1))
-
-    for i in range(num_indices - 1):
-        angles = sa[indices[i]:indices[i+1]]
-
-        min_angle = np.min(angles)
-        max_angle = np.max(angles)
-        delta_sa[i] = max_angle - min_angle
-
-        num_min_angles = np.sum(angles==min_angle)
-        num_max_angles = np.sum(angles==max_angle)
-        min_pnts[i] = np.min([num_min_angles, num_max_angles])
-
-    return delta_sa, min_pnts
-
-
-def get_idx(indices, idx,
-            t, t_cur, t_next,
-            delta_sa, num_pnts,
-            min_delta, min_pnts):
-
-    # increment the swath until the first swath point time is >= the current
-    # trajectory time
-    while (t[indices[idx]] < t_cur):
-        idx += 1
-
-    # If swath fails the quality metrics, increment to the next swath until we
-    # find a swath with good metrics or we resah the next trajectory time
-    while (t[indices[idx]] < t_next) and (
-            (delta_sa[idx] < min_delta) or 
-            (num_pnts[idx] < min_pnts)):
-        idx += 1
-
-    # If we didn't find a good swath, return -1
-    if (t[indices[idx]] > t_next):
-        return -1
-    else:
-        return idx
 
 
 def traj_xyz_mean(L, H, alpha_l, alpha_h):
