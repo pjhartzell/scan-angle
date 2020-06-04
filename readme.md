@@ -7,19 +7,19 @@ There are a number of ways to approach this. Two ways are:
 1. Similar to Gatziolis & McGaughey's multi-return method, split the data into
 time blocks and estimate a single trajectory point for each time block. Each time block's estimated trajectory location (and time) is the average of many triangle solutions (and times) from many point pairs.
 
-    The current method selects point pairs "from the outside in" until a minumum total angle (difference between the scan angles for each point pair) is reached. This results in hundreds to thousands of point pairs within each time block, which smooths the trajectory estimates by averaging the error in the quantized (integer) scan angle values. We have also found that eliminating the extreme scan angles improves the solution.
+    The current implementation of this approach selects point pairs "from the outside in" until a minumum total scan angle (difference between the scan angles for each point pair) is reached. This results in hundreds to thousands of point pairs within each time block, which smooths the trajectory estimates by averaging the error in the quantized (integer) scan angle values. We have also found that eliminating the extreme scan angles improves the solution.
 
     This method is contained in branch `master`.
 
-2. Split the data into scan sweeps, where a sweep is a single pass of the laser from maximum to minimum scan angle, or vice versa. For each sweep, find the scan angle "bins" that meet a population density threshold (>= median bin population). Of these, identify the max and min scan angle. Noting the data is still ordered by time, select two point pairs from the bin extremities. These point pairs have opposite scan angle quantization error, and the average of their triangle solutions cancels the error to a large extent.
+2. Split the data into scan sweeps, where a sweep is a single pass of the laser from maximum to minimum scan angle, or vice versa. For each sweep, find the scan angle "bins" that meet a population density threshold (>= median bin population). Of these, identify the max and min scan angle. Noting the data is still ordered by time, select two point pairs from the bin extremities. These point pairs have opposite scan angle quantization error, and the average of their triangle solutions cancels the quantization error to a large extent.
 
     We have found that this method works better than method #1 above when sensor dynamics are low (i.e., the lidar sensor was not vibrating or subject to high turbulence), but worse otherwise.
 
     This method is contained in branch `selective`.
 
-Note that the value of producing a smooth (low random error) trajectory estimate is tempered by the fact that systematic errors due to aircraft pitch (particularly evident in the horizontal errors) will likely be larger than the random errors produced by these methods. Also note that if the scan angle values are stored per the LAS specification (scan angles relative to nadir, thus incorporating aircraft roll), systematic errors due to aircraft roll should be small.
+Note that the value of producing a smooth (low random error) trajectory estimate is tempered by the fact that systematic errors due to aircraft/sensor pitch (particularly evident in the horizontal differences between estimated and known/true trajectories) will likely be larger than the random errors produced by these methods.
 
-It is expected that a smoothing filter similar to that applied to the multi-return method will be applied to the results produced by these methods.
+It is expected that a smoothing filter, similar to what is used in the multi-return method, will be applied to the trajectories produced by the above methods.
 
 ## Geometry sketch
 
