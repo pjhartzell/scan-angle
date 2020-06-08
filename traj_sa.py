@@ -15,13 +15,15 @@ from traj_sa_funcs import (
 # pipeline in the read_las function if desired.
 
 # USER INPUT
-filename = 'G:/UH/C2_L2_sorted.las'
+filename = 'F:/UH/C2_L2_sorted.las'
 delta_t = 0.1       # Time block duration (seconds)
 trim_a = 5          # Extent of extreme scan angles to remove (deg)
 min_delta_a = 15    # Minimum scan angle difference between point pairs (deg)
 min_num_sol = 20    # Minimum number of ray intersections. This is typically not
                     # going to be a concern unless there are areas of very few 
                     # returns (e.g., over water) or very small time blocks.
+sbet = True         # True = save estimated trajectory in SBET format
+                    # False = save estimated trajectory in text format
 # ------------------------------------------------------------------------------
 
 
@@ -66,6 +68,6 @@ for idx1, idx2 in zip(indices[:-1], indices[1:]):
 
             traj_txyz.append([t_mean, x_mean, y_mean, z_mean])
 
-save_traj(filename, traj_txyz)
+save_traj(filename, traj_txyz, sbet)
 
 

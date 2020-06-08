@@ -63,7 +63,30 @@ def traj_xyz_mean(L, H, alpha_l, alpha_h):
     return np.mean(x), np.mean(y), np.mean(z)
 
 
-def save_traj(in_name, traj_txyz):
+def save_traj(in_name, traj_txyz, sbet=False):
+    records = np.array([tuple(row) for row in traj_txyz],
+                       dtype=[('GpsTime', np.float),
+                              ('X', np.float),
+                              ('Y', np.float),
+                              ('Z', np.float)])
+
     root, _ = os.path.splitext(in_name)
-    out_name = root + '_EstimatedTrajectory.txt'
-    np.savetxt(out_name, traj_txyz, fmt="%0.6f,%0.3f,%0.3f,%0.3f")
+    if sbet:
+        json_pipe = [
+            {
+                "type": "writers.sbet", 
+                "filename": root + '_EstimatedTrajectory.sbet'
+            }
+        ]
+    else:
+        json_pipe = [
+            {
+                "type": "writers.text", 
+                "filename": root + '_EstimatedTrajectory.txt',
+                "order": "GpsTime:6,X:3,Y:3,Z:3"
+            }
+        ]
+
+    pipeline = pdal.Pipeline(json=json.dumps(json_pipe), arrays=[records,])
+    pipeline.validate()
+    pipeline.execute()
