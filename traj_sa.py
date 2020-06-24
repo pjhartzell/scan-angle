@@ -15,20 +15,21 @@ from traj_sa_funcs import (
 # pipeline in the read_las function if desired.
 
 # USER INPUT
-filename = 'F:/UH/C2_L2_sorted.las'
+filename = 'E:/sri_data/uh_campus/C2_L2_s.las'
 delta_t = 0.1       # Time block duration (seconds)
-trim_a = 5          # Extent of extreme scan angles to remove (deg)
-min_delta_a = 15    # Minimum scan angle difference between point pairs (deg)
+trim_a = 3          # Extent of extreme scan angles to remove (deg)
+min_delta_a = 5     # Minimum scan angle difference between point pairs (deg)
 min_num_sol = 20    # Minimum number of ray intersections. This is typically not
                     # going to be a concern unless there are areas of very few 
                     # returns (e.g., over water) or very small time blocks.
-sbet = True         # True = save estimated trajectory in SBET format
+sort = True         # True = Sort input point cloud data by time
+sbet = False        # True = save estimated trajectory in SBET format
                     # False = save estimated trajectory in text format
 # ------------------------------------------------------------------------------
 
 
 # Get time, x, y, z, and scan angle rank from timesorted LAS file
-txyza = read_las(filename)
+txyza = read_las(filename, sort=sort)
 
 # Time block start locations
 indices = time_block_indices(txyza[:,0], delta_t)

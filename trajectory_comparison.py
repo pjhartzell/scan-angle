@@ -2,14 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-actual_traj_file = 'G:/UH/sbet_047_IGS08-UTM15N-Ellipsoid.txt'
-est_traj_file = 'G:/UH/dt01_mina15_minsol20_trim5.txt'
-# actual_traj_file = 'G:/Sitka/helipod/apps_final_ATLANS-20160503_NAD83-UTM8N-Geoid12B.txt'
-# est_traj_file = 'G:/Sitka/helipod/dt01_mina15_minsol20_trim5.txt'
-
+actual_traj_file = 'E:/sri_data/uh_campus/sbet_047_IGS08-UTM15N-Ellipsoid.txt'
+est_traj_file = 'E:/sri_data/uh_campus/C2_L2_s_EstimatedTrajectory.txt'
 
 actual_traj = np.loadtxt(actual_traj_file, delimiter=',', skiprows=1)
-est_traj = np.loadtxt(est_traj_file, delimiter=',')
+est_traj = np.loadtxt(est_traj_file, delimiter=',', skiprows=1)
 
 # Trim actual trajectory to time bounds of estimated trajectory
 min_t = np.min(est_traj[:,0])
