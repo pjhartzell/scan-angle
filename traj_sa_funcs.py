@@ -4,13 +4,21 @@ import numpy as np
 import pdal
 
 
-def read_las(filename):
+def read_las(filename, sort):
     json_pipe = [
         {
             "type":"readers.las", 
             "filename":filename
         }
     ]
+
+    if sort:
+        json_pipe.append(
+            {
+                "type":"filters.sort",
+                "dimension":"GpsTime"
+            }
+        )
 
     pipeline = pdal.Pipeline(json.dumps(json_pipe))
     pipeline.validate()

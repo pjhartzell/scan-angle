@@ -1,21 +1,15 @@
-import math
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
-import os
-import scipy
-from scipy.signal import savgol_filter
-from scipy.interpolate import make_lsq_spline
 
 
-actual_traj_file = 'F:/Sitka/helipod/apps_final_ATLANS-20160503_NAD83-UTM8N-Geoid12B.txt'
-est_traj_file = 'F:/Sitka/helipod/selective_ta5_mda15_j8.txt'
+actual_traj_file = 'D:/OneDrive - University Of Houston/2018-10-25 - ERDC BAA/ActualWork/sri/sri_data/ak_sitka/apps_final_ATLANS-20160503_NAD83-UTM8N-Geoid12B.txt'
+est_traj_file = 'D:/OneDrive - University Of Houston/2018-10-25 - ERDC BAA/ActualWork/sri/sri_data/ak_sitka/autoclass - Scanner 1 - 160503_011744_VQ480i - originalpoints_4-method2-EstimatedTrajectory.txt'
 
 # actual_traj_file = 'F:/UH/sbet_047_IGS08-UTM15N-Ellipsoid.txt'
 # est_traj_file = 'F:/UH/selective_ta5_mda15_j8.txt'
 
 actual_traj = np.loadtxt(actual_traj_file, delimiter=',', skiprows=1)
-est_traj = np.loadtxt(est_traj_file, delimiter=',')
+est_traj = np.loadtxt(est_traj_file, delimiter=',', skiprows=1)
 
 # Trim actual trajectory to time bounds of estimated trajectory
 min_t = np.min(est_traj[:,0])

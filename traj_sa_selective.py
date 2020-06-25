@@ -18,17 +18,21 @@ from traj_sa_funcs import (
 # This method works well when sensor dynamics have a minimal impact on the scan
 # angle values.
 
+# Note that the data must be sorted by time. This can be added to the PDAL
+# pipeline in the read_las function if desired.
+
 # USER INPUT
-filename = "F:/Sitka/helipod/autoclass - Scanner 1 - 160503_011252_VQ480i - originalpoints_timesorted.las"
+filename = "D:/OneDrive - University Of Houston/2018-10-25 - ERDC BAA/ActualWork/sri/sri_data/ak_sitka/autoclass - Scanner 1 - 160503_011744_VQ480i - originalpoints_4.las"
 trim_a = 5          # Extent of extreme scan angles to remove (deg)
 min_delta_a = 15    # Minimum scan angle difference between point pairs (deg)
 jitter = 8          # Half-size of box filter applied to scan angles when 
                     # identifying scan sweeps
+sort = True         #True = Sort input point cloud by time
 # ------------------------------------------------------------------------------
 
 
 # Get time, x, y, z, and scan angle rank from timesorted LAS file
-txyza = read_las(filename)
+txyza = read_las(filename, sort=sort)
 
 # Scan sweep start locations
 indices = sweep_indices(txyza[:,4], jitter)
