@@ -1,6 +1,6 @@
 # Airborne lidar sensor trajectory estimation from LAS scan angle field
 
-Given point cloud data sorted by time, estimates of trajectory time and location (XYZ)
+Given point cloud data **sorted by time**, estimates of trajectory time and location (XYZ)
 are generated from pairs of intersecting rays. For a given point pair (chosen to approximately maximize the difference between their scan angles), a pair of rays originating at the point XYZ locations are formed. The vertical ray directions are defined by each point's scan angle. Horizontally, the rays are directed at their counterpart, thereby forming a triangle. The XYZ location of the top of the triangle is an estimate of the trajectory location.
 
 There are a number of ways to approach this. Two ways are:
